@@ -11,7 +11,7 @@ jobs:
       - checkout
       - run: mkdir bucket && echo "<h1>hello world you are awesome</h1>" > bucket/index.html
       - aws-s3/sync:
-          aws-region: "us-east-1"
+          aws-region: us-east-1
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           from: bucket
