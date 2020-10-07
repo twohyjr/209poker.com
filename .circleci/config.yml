@@ -1,7 +1,17 @@
 version: 2.1
+
 orbs:
-  node: circleci/node@3.0.0
+  node: circleci/node@4.0.1
+
+jobs:
+  prepare:
+    steps:
+      - checkout
+      - run:
+          name: Generate ember build
+          command: ember build --environment=development --output-path=dist/website
+
 workflows:
-  node-tests:
+  build_and_test:
     jobs:
-      - node/test
+      - prepare
