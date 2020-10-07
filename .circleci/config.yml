@@ -9,6 +9,7 @@ jobs:
       - image: 'cimg/python:3.6'
     steps:
       - checkout
+      - run: ember build --environment=production --output-path=dist/website 
       - run: mkdir bucket && echo "<h1>hello world you are awesome</h1>" > bucket/index.html
       - aws-s3/sync:
           aws-region: AWS_REGION
