@@ -1,17 +1,22 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@4.0.1
-
+  aws-s3: circleci/aws-s3@2.0.0
+  
 jobs:
-  prepare:
+  build:
+    docker:
+      - image: 'cimg/python:3.6'
     steps:
       - checkout
-      - run:
-          name: Generate ember build
-          command: ember build --environment=development --output-path=dist/website
+      - run: mkdir bucket && echo "<h1>hello world you are awesome</h1>" > bucket/index.html
+      - aws-s3/sync:
+          aws-region: AWS_REGION_BLUE
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          from: bucket
+          to: 's3://209poker.com'
+      - aws-s3/copy:
+          from: bucket/index.html
+          to: 's3://209poker.com'
 
-workflows:
-  build_and_test:
-    jobs:
-      - prepare
