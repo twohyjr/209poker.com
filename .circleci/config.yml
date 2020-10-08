@@ -9,14 +9,13 @@ jobs:
       - image: 'cimg/python:3.6'
     steps:
       - checkout
-      - run: 
+      - run: ./deploy.sh
       - aws-s3/sync:
           aws-region: AWS_REGION
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          from: bucket
+          from: dist/website
           to: 's3://209poker.com'
       - aws-s3/copy:
           from: bucket/index.html
           to: 's3://209poker.com'
-
