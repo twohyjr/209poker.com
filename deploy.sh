@@ -1,6 +1,6 @@
 #! /bin/bash
 
-cd ./frontend/website
+cd ./website
 rm -rf ./dist
 
 make build-ci
