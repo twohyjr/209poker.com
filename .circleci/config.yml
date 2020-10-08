@@ -37,10 +37,12 @@ jobs:
       - aws-s3/copy:
           from: bucket/index.html
           to: 's3://209poker.com'
-
+          
 workflows:
   version: 2
   frontend:
     jobs:
       - ember-build
-      - aws-build
+      - aws-build:
+          requires:
+            - ember-build
