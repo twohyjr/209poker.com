@@ -3,19 +3,44 @@ version: 2.1
 orbs:
   aws-s3: circleci/aws-s3@2.0.0
   
+references:
+  images:
+    ember: &EMBER_IMAGE circleci/node:8-browsers
+    aws: &AWS_IMAGE cimg/python:3.6
+  
 jobs:
-  build:
+  # build ember so frontend tests run faster
+  ember-build:
     docker:
-      - image: 'cimg/python:3.6'
+      - image: *EMBER_IMAGE
     steps:
       - checkout
-      - run: ./deploy.sh
+      - run: cd website && make build-ci
+
+      # saves the build to a workspace to be passed to a downstream job
+      - persist_to_workspace:
+          root: website
+          paths:
+            - dist
+
+  aws-build:
+    docker:
+      - image: *AWS_IMAGE
+    steps:
+      - checkout
       - aws-s3/sync:
-          aws-region: AWS_REGION
+          aws-region: AWS_REGION_BLUE
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          from: dist/website
+          from: website/dist
           to: 's3://209poker.com'
       - aws-s3/copy:
           from: bucket/index.html
           to: 's3://209poker.com'
+
+workflows:
+  version: 2
+  frontend:
+    jobs:
+      - ember-build
+      - aws-build
