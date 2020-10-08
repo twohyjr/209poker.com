@@ -1,14 +1,21 @@
----
-version: 2
+version: 2.1
 
-references:
-  images:
-    ember: &EMBER_IMAGE circleci/node:8-browsers
+orbs:
+  aws-s3: circleci/aws-s3@2.0.0
+  
 jobs:
-  # build the ember js website
-  ember-build:
+  build:
     docker:
-      - image: *EMBER_IMAGE
+      - image: 'cimg/python:3.6'
     steps:
       - checkout
-      - run: /deploy-ui.sh
+      - run: ./deploy.sh
+      - aws-s3/sync:
+          aws-region: AWS_REGION
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          from: dist/website
+          to: 's3://209poker.com'
+      - aws-s3/copy:
+          from: bucket/index.html
+          to: 's3://209poker.com'
